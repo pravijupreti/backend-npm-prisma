@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: mydatabase
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5440:5432"
+    networks:
+      - app-network
+  app:
+    build: .
+    ports:
+      - "3004:3000"
+    environment:
+      DATABASE_URL: postgresql://myuser:12345@db:5432/mydatabase
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
