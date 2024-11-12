@@ -1,21 +1,39 @@
-import { Prisma } from "@prisma/client";
+// pages/example2.tsx
+import { GetServerSideProps } from "next";
+import Example2 from "./example2";  // Make sure the component is imported with an uppercase
+import { getUsers } from "./getuser";
 
-const {PrismaClient} = require('@prisma/client');
-const prisma = new PrismaClient();
+// Define the type for each user
+type User = {
+  id: string;
+  email: string;
+  fullName: string;
+  address: string;
+};
 
-async function fetchUsers() {
-    try{
-        const users = await prisma.User.findMany();
-        console.log(users)
-    }
-    catch(error){
-        console.log('error fetching users:',error)
-    }
-}
+type Props = {
+  users: User[];
+};
 
-const SelfTry =() =>{
-    return(<div>this is from web page</div>)
-}
+// Fetch users in getServerSideProps and pass them to the component
+export const getServerSideProps: GetServerSideProps = async () => {
+  const users = await getUsers(); // Fetch users once here
 
-fetchUsers();
+  return {
+    props: {
+      users,  // Pass the users fetched
+    },
+  };
+};
+
+// The parent page component
+const SelfTry = ({ users }: Props) => {
+  return (
+    <div>
+      <h1>User List</h1>
+      <Example2 users={users} /> {/* Pass users as props to Example2 */}
+    </div>
+  );
+};
+
 export default SelfTry;

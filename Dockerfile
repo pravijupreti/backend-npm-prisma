@@ -21,6 +21,13 @@ COPY ./prisma ./prisma
 COPY ./lib ./lib
 COPY .env ./.env
 COPY ./public ./public
+COPY  ./tailwind.config.ts ./tailwind.config.ts
+COPY ./postcss.config.mjs ./postcss.config.mjs
+COPY ./tsconfig.json ./tsconfig.json
+COPY ./next.config.ts ./next.config.ts
+COPY ./next-env.d.ts ./next-env.d.ts
+
+
 
 # Expose port 3000 (default for Next.js)
 EXPOSE 3000

@@ -1,6 +1,7 @@
 import { prisma } from '../../lib/prisma'
 import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { useState } from 'react'
+import CoolTable from './example2';
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
@@ -68,52 +69,6 @@ export default function Page({ user }: Props) {
           </table>
         </div>
       )}
-
-      {/* Form to input new user details */}
-      <form onSubmit={handleFormSubmit}>
-        <h3>Add New User</h3>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={newUser.name}
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={newUser.password}
-            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="address">Address:</label>
-          <input
-            type="text"
-            id="address"
-            value={newUser.address}
-            onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
-            required
-          />
-        </div>
-        <button type="submit">Add User</button>
-      </form>
     </main>
   );
 }
