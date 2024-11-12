@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,11 +7,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model User{
-  id Int @id @default(autoincrement())
-  email String @unique
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
   password String
-  name String
-  address String
+  name     String
+  address  String
+
+  // Relations
+  student  Student?
+  teacher  Teacher?
+}
+
+model Teacher {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique // Foreign key to User
+  subject    String
+  department String?
+  hireDate   DateTime @default(now())
+  
+  // Relations
+  user       User     @relation(fields: [userId], references: [id])
+  courses    Course[] // A teacher can have multiple courses
+}
+
+model Student {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique // Foreign key to User
+  enrollmentDate DateTime @default(now())
+
+  // Relations
+  user       User     @relation(fields: [userId], references: [id])
+  enrollments Enrollment[] // A student can enroll in multiple courses
+  submissions Submission[] // A student can submit multiple assignments
+}
+
+model Course {
+  id         Int      @id @default(autoincrement())
+  title      String
+  description String?
+  teacherId  Int      // Foreign key to Teacher
+  startDate  DateTime
+  endDate    DateTime?
+
+  // Relations
+  teacher    Teacher  @relation(fields: [teacherId], references: [id])
+  enrollments Enrollment[] // Many-to-many relationship with Student through Enrollment
+  assignments Assignment[] // A course can have multiple assignments
+}
+
+model Enrollment {
+  id         Int      @id @default(autoincrement())
+  studentId  Int      // Foreign key to Student
+  courseId   Int      // Foreign key to Course
+  enrollmentDate DateTime @default(now())
+
+  // Relations
+  student    Student  @relation(fields: [studentId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([studentId, courseId]) // Each student can enroll in a course only once
+}
+
+model Assignment {
+  id         Int      @id @default(autoincrement())
+  title      String
+  description String?
+  courseId   Int      // Foreign key to Course
+  dueDate    DateTime
+
+  // Relations
+  course     Course   @relation(fields: [courseId], references: [id])
+  submissions Submission[] // Each assignment can have multiple submissions
+}
+
+model Submission {
+  id         Int      @id @default(autoincrement())
+  assignmentId Int    // Foreign key to Assignment
+  studentId  Int      // Foreign key to Student
+  submittedAt DateTime @default(now())
+  content    String
+
+  // Relations
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId]) // Each student can submit only once per assignment
 }
