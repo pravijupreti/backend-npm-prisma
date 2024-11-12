@@ -25,7 +25,6 @@ COPY  ./tailwind.config.ts ./tailwind.config.ts
 COPY ./postcss.config.mjs ./postcss.config.mjs
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.ts ./next.config.ts
-COPY ./next-env.d.ts ./next-env.d.ts
 
 
 
@@ -35,8 +34,5 @@ EXPOSE 3000
 # Generate Prisma client
 RUN npx prisma generate
 
-# Build the Next.js app for production
-RUN npm run build
-
 # Start the app in production mode
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]

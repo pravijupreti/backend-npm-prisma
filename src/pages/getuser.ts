@@ -12,3 +12,4 @@ export const getUsers = async () => {
     address: user.address,
   }));
 };
+export default getUsers

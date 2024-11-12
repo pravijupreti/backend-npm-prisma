@@ -1,7 +1,5 @@
-// pages/index.tsx
-
 import React from 'react';
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next";
 import 'tailwindcss/tailwind.css';
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -18,9 +16,9 @@ type Props = {
 };
 
 const Example2 = ({ users }: Props) => {
-  const columns = users.length > 0 ? Object.keys(users[0]) : [];
+  const columns = users && users.length > 0 ? Object.keys(users[0]) : [];
 
-  if (users.length === 0) {
+  if (!users || users.length === 0) {
     return <div>No data available</div>;
   }
 
@@ -47,7 +45,7 @@ const Example2 = ({ users }: Props) => {
               >
                 {columns.map((column, colIndex) => (
                   <td key={colIndex} className="py-4 px-6 text-gray-800">
-                    {user[column] || 'N/A'}
+                    {user[column as keyof User] || 'N/A'}
                   </td>
                 ))}
               </tr>
@@ -57,6 +55,24 @@ const Example2 = ({ users }: Props) => {
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const users = await prisma.user.findMany();
+    return {
+      props: {
+        users: users || [],  // Return an empty array if no users found
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return {
+      props: {
+        users: [],  // Fallback to an empty array in case of error
+      },
+    };
+  }
 };
 
 export default Example2;
